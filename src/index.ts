@@ -107,9 +107,14 @@ client.on(Events.MessageCreate, async (message: Message) => {
     return;
   }
 
-  // Only respond in watched channels (skip filter if WATCH_ALL_CHANNELS)
+  // Channel filter: global env OR per-guild config
   if (!WATCH_ALL_CHANNELS && !WATCH_CHANNEL_IDS.has(message.channelId)) {
-    return;
+    // Check per-guild config for channel overrides
+    const guildCfg = getProjectConfig(message.guildId ?? 'default');
+    const guildChannels = guildCfg?.watchChannelIds as string[] | undefined;
+    if (!guildChannels || !guildChannels.includes(message.channelId)) {
+      return;
+    }
   }
 
   // Handle !link command
