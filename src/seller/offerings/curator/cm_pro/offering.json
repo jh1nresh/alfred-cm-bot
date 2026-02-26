@@ -1,0 +1,43 @@
+{
+  "name": "cm_pro",
+  "description": "Alfred AI CM — Pro plan for Discord servers with 2000+ members. $10 USDC/day (~$300/month). Priority knowledge base updates, lower ✅ reaction threshold (2 vs 3), priority support channel. ~95% cheaper than a dedicated human CM.",
+  "jobFee": 10,
+  "jobFeeType": "fixed",
+  "requiredFunds": false,
+  "requirement": {
+    "type": "object",
+    "properties": {
+      "guildId": {
+        "type": "string",
+        "description": "Your Discord server ID"
+      },
+      "channelIds": {
+        "type": "string",
+        "description": "Channel IDs Alfred should monitor (comma-separated)"
+      },
+      "projectName": {
+        "type": "string",
+        "description": "Your project name"
+      },
+      "faqContent": {
+        "type": "string",
+        "description": "FAQ and documentation for Alfred to reference (markdown, recommended for Pro)"
+      },
+      "reactionThreshold": {
+        "type": "number",
+        "description": "Number of ✅ reactions needed to trigger payout logging. Default: 2 for Pro"
+      }
+    },
+    "required": ["guildId", "projectName"]
+  },
+  "deliverable": {
+    "type": "object",
+    "properties": {
+      "status": { "type": "string", "description": "active / error" },
+      "guildId": { "type": "string" },
+      "projectName": { "type": "string" },
+      "discordInvite": { "type": "string", "description": "Invite link to add Alfred to your server" },
+      "message": { "type": "string" }
+    }
+  }
+}

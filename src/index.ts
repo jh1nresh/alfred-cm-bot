@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
   Client,
   GatewayIntentBits,
@@ -17,18 +18,12 @@ if (!DISCORD_TOKEN) {
   throw new Error('DISCORD_TOKEN environment variable is required');
 }
 
-const WATCH_CHANNEL_IDS_RAW = process.env.WATCH_CHANNEL_IDS;
-if (!WATCH_CHANNEL_IDS_RAW) {
-  throw new Error('WATCH_CHANNEL_IDS environment variable is required');
-}
-
+// WATCH_CHANNEL_IDS is optional — empty means watch ALL channels
+const WATCH_CHANNEL_IDS_RAW = process.env.WATCH_CHANNEL_IDS || '';
 const WATCH_CHANNEL_IDS = new Set(
   WATCH_CHANNEL_IDS_RAW.split(',').map((id) => id.trim()).filter(Boolean)
 );
-
-if (WATCH_CHANNEL_IDS.size === 0) {
-  throw new Error('WATCH_CHANNEL_IDS must contain at least one channel ID');
-}
+const WATCH_ALL_CHANNELS = WATCH_CHANNEL_IDS.size === 0;
 
 const CHECKMARK_EMOJI = '✅';
 const LINK_COMMAND_PREFIX = '!link ';
@@ -48,8 +43,8 @@ const client = new Client({
 
 // Handle ready event
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`[Alfred] Logged in as ${readyClient.user.tag}`);
-  console.log(`[Alfred] Watching channels: ${Array.from(WATCH_CHANNEL_IDS).join(', ')}`);
+  console.log(`[Curator] Logged in as ${readyClient.user.tag}`);
+  console.log(`[Curator] Watching channels: ${Array.from(WATCH_CHANNEL_IDS).join(', ')}`);
 
   // Initialize reaction tracker
   setupReactionTracker(client);
@@ -112,8 +107,8 @@ client.on(Events.MessageCreate, async (message: Message) => {
     return;
   }
 
-  // Only respond in watched channels
-  if (!WATCH_CHANNEL_IDS.has(message.channelId)) {
+  // Only respond in watched channels (skip filter if WATCH_ALL_CHANNELS)
+  if (!WATCH_ALL_CHANNELS && !WATCH_CHANNEL_IDS.has(message.channelId)) {
     return;
   }
 
@@ -152,7 +147,7 @@ client.on(Events.MessageCreate, async (message: Message) => {
     const config = getProjectConfig(guildId);
     if (config?.expiresAt && new Date(config.expiresAt) < new Date()) {
       // Subscription expired — don't respond
-      console.log(`[Alfred] Subscription expired for guild ${guildId} (expired: ${config.expiresAt})`);
+      console.log(`[Curator] Subscription expired for guild ${guildId} (expired: ${config.expiresAt})`);
       return;
     }
 
@@ -166,10 +161,10 @@ client.on(Events.MessageCreate, async (message: Message) => {
     await sentMessage.react(CHECKMARK_EMOJI);
 
     console.log(
-      `[Alfred] Replied to message ${message.id} in channel ${message.channelId}`
+      `[Curator] Replied to message ${message.id} in channel ${message.channelId}`
     );
   } catch (error) {
-    console.error('[Alfred] Error handling message:', error);
+    console.error('[Curator] Error handling message:', error);
 
     // Try to send an error message
     try {
@@ -177,28 +172,28 @@ client.on(Events.MessageCreate, async (message: Message) => {
         "I apologize, but I encountered an error while processing your message. Please try again."
       );
     } catch (replyError) {
-      console.error('[Alfred] Failed to send error reply:', replyError);
+      console.error('[Curator] Failed to send error reply:', replyError);
     }
   }
 });
 
 // Handle errors
 client.on(Events.Error, (error) => {
-  console.error('[Alfred] Client error:', error);
+  console.error('[Curator] Client error:', error);
 });
 
 // Login to Discord
 client.login(DISCORD_TOKEN).catch((error) => {
-  console.error('[Alfred] Failed to login:', error);
+  console.error('[Curator] Failed to login:', error);
   process.exit(1);
 });
 
 // Start ACP seller if configured
 if (process.env.LITE_AGENT_API_KEY) {
   import("./seller/runtime/seller.js").then(({ startSeller }) => {
-    console.log('[Alfred] Starting ACP seller runtime...');
+    console.log('[Curator] Starting ACP seller runtime...');
     startSeller();
   }).catch((err) => {
-    console.error('[Alfred] Failed to start ACP seller:', err);
+    console.error('[Curator] Failed to start ACP seller:', err);
   });
 }

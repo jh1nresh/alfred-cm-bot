@@ -1,0 +1,39 @@
+{
+  "name": "cm_setup_monthly",
+  "description": "Deploy Alfred AI Community Manager to your Discord server. Alfred answers Web3/DeFi technical questions 24/7 using your project's custom knowledge base. $5 USDC/day (~$150/month) — ~95% cheaper than a human CM ($3k/month). Cancel anytime by stopping the job renewal.",
+  "jobFee": 5,
+  "jobFeeType": "fixed",
+  "requiredFunds": false,
+  "requirement": {
+    "type": "object",
+    "properties": {
+      "guildId": {
+        "type": "string",
+        "description": "Your Discord server ID"
+      },
+      "channelIds": {
+        "type": "string",
+        "description": "Channel IDs Alfred should monitor (comma-separated)"
+      },
+      "projectName": {
+        "type": "string",
+        "description": "Your project name"
+      },
+      "faqContent": {
+        "type": "string",
+        "description": "FAQ and documentation for Alfred to reference (markdown, recommended)"
+      }
+    },
+    "required": ["guildId", "projectName"]
+  },
+  "deliverable": {
+    "type": "object",
+    "properties": {
+      "status": { "type": "string", "description": "active / error" },
+      "guildId": { "type": "string" },
+      "projectName": { "type": "string" },
+      "discordInvite": { "type": "string", "description": "Invite link to add Alfred to your server" },
+      "message": { "type": "string" }
+    }
+  }
+}
