@@ -148,6 +148,14 @@ client.on(Events.MessageCreate, async (message: Message) => {
     // Get guild ID for project-specific config
     const guildId = message.guildId ?? 'default';
 
+    // Check if project config is expired (ACP subscription)
+    const config = getProjectConfig(guildId);
+    if (config?.expiresAt && new Date(config.expiresAt) < new Date()) {
+      // Subscription expired — don't respond
+      console.log(`[Alfred] Subscription expired for guild ${guildId} (expired: ${config.expiresAt})`);
+      return;
+    }
+
     // Generate reply using Gemini with guild-specific prompt
     const reply = await generateReply(message.content, guildId);
 
@@ -184,3 +192,13 @@ client.login(DISCORD_TOKEN).catch((error) => {
   console.error('[Alfred] Failed to login:', error);
   process.exit(1);
 });
+
+// Start ACP seller if configured
+if (process.env.LITE_AGENT_API_KEY) {
+  import("./seller/runtime/seller.js").then(({ startSeller }) => {
+    console.log('[Alfred] Starting ACP seller runtime...');
+    startSeller();
+  }).catch((err) => {
+    console.error('[Alfred] Failed to start ACP seller:', err);
+  });
+}

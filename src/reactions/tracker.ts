@@ -1,99 +1,12 @@
 import { Client, MessageReaction, PartialMessageReaction, User, PartialUser } from 'discord.js';
-import { ethers } from 'ethers';
 
 const HELPFUL_REACTION_THRESHOLD = parseInt(process.env.HELPFUL_REACTION_THRESHOLD || '3', 10);
 const CHECKMARK_EMOJI = '✅';
 
-// On-chain payout configuration
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
-const BOT_PRIVATE_KEY = process.env.BOT_PRIVATE_KEY;
-const BASE_RPC_URL = process.env.BASE_RPC_URL || 'https://mainnet.base.org';
-
-// CMTreasury ABI (only the payout function we need)
-const CM_TREASURY_ABI = [
-  'function payout(bytes32 replyId) external',
-  'function paidReplies(bytes32) view returns (bool)',
-];
-
 // Track message IDs that have already triggered payout to avoid double-triggering
 const triggeredMessageIds = new Set<string>();
 
-// Ethers provider and contract (initialized if config present)
-let contract: ethers.Contract | null = null;
-let wallet: ethers.Wallet | null = null;
-
-/**
- * Initialize on-chain payout if configured
- */
-function initializeOnChainPayout(): boolean {
-  if (!CONTRACT_ADDRESS || !BOT_PRIVATE_KEY) {
-    console.log('[Reaction Tracker] On-chain payout not configured (missing CONTRACT_ADDRESS or BOT_PRIVATE_KEY)');
-    return false;
-  }
-
-  try {
-    const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
-    wallet = new ethers.Wallet(BOT_PRIVATE_KEY, provider);
-    contract = new ethers.Contract(CONTRACT_ADDRESS, CM_TREASURY_ABI, wallet);
-
-    console.log(`[Reaction Tracker] On-chain payout enabled`);
-    console.log(`[Reaction Tracker] Contract: ${CONTRACT_ADDRESS}`);
-    console.log(`[Reaction Tracker] Bot wallet: ${wallet.address}`);
-
-    return true;
-  } catch (error) {
-    console.error('[Reaction Tracker] Failed to initialize on-chain payout:', error);
-    return false;
-  }
-}
-
-/**
- * Convert a message ID to a bytes32 for the contract
- */
-function messageIdToBytes32(messageId: string): string {
-  // Pad the message ID (snowflake) to 32 bytes
-  // Discord snowflakes are 64-bit integers, so we pad with zeros
-  const hex = BigInt(messageId).toString(16).padStart(64, '0');
-  return '0x' + hex;
-}
-
-/**
- * Trigger on-chain payout for a message
- */
-async function triggerOnChainPayout(messageId: string): Promise<boolean> {
-  if (!contract || !wallet) {
-    return false;
-  }
-
-  const replyId = messageIdToBytes32(messageId);
-
-  try {
-    // Check if already paid on-chain
-    const alreadyPaid = await contract.paidReplies(replyId);
-    if (alreadyPaid) {
-      console.log(`[Reaction Tracker] Message ${messageId} already paid on-chain`);
-      return true;
-    }
-
-    console.log(`[Reaction Tracker] Initiating on-chain payout for message ${messageId}...`);
-
-    const tx = await contract.payout(replyId);
-    console.log(`[Reaction Tracker] Payout tx submitted: ${tx.hash}`);
-
-    const receipt = await tx.wait();
-    console.log(`[Reaction Tracker] Payout confirmed in block ${receipt.blockNumber}`);
-
-    return true;
-  } catch (error) {
-    console.error(`[Reaction Tracker] On-chain payout failed for message ${messageId}:`, error);
-    return false;
-  }
-}
-
 export function setupReactionTracker(client: Client): void {
-  // Initialize on-chain payout if configured
-  const onChainEnabled = initializeOnChainPayout();
-
   client.on(
     'messageReactionAdd',
     async (
@@ -149,13 +62,13 @@ export function setupReactionTracker(client: Client): void {
             '[PAYOUT TRIGGERED] messageId:',
             message.id,
             'replyCount:',
-            count
+            count,
+            'guildId:',
+            message.guildId
           );
 
-          // Try on-chain payout if enabled
-          if (onChainEnabled) {
-            await triggerOnChainPayout(message.id);
-          }
+          // Note: On-chain payouts removed - ACP handles payment
+          // This is now just a performance metric for tracking helpful replies
         }
       } catch (error) {
         console.error('[Reaction Tracker] Error processing reaction:', error);

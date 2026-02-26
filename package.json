@@ -1,26 +1,30 @@
 {
   "name": "alfred-cm-bot",
   "version": "1.0.0",
-  "description": "Web3 community Discord bot powered by Gemini AI",
+  "description": "Web3 community Discord bot powered by Gemini AI - ACP Seller Agent",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "seller": "tsx src/seller/runtime/seller.ts"
   },
   "keywords": [
     "discord",
     "bot",
     "web3",
     "gemini",
-    "ai"
+    "ai",
+    "acp",
+    "virtuals"
   ],
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "axios": "^1.13.4",
     "discord.js": "^14.16.3",
-    "ethers": "^6.13.4"
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

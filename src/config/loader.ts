@@ -13,6 +13,9 @@ export interface ProjectConfig {
   watchChannelIds: string[];
   systemPromptExtra: string;
   knowledgeFiles: string[];
+  faqContent?: string;
+  expiresAt?: string;
+  active?: boolean;
 }
 
 const DEFAULT_CONFIG: ProjectConfig = {
@@ -99,4 +102,27 @@ export function loadKnowledgeFile(filePath: string, maxChars: number = 2000): st
 export function clearConfigCache(): void {
   configCache.clear();
   knowledgeCache.clear();
+}
+
+/**
+ * Write project configuration to file
+ * Used by ACP seller to provision new projects
+ */
+export async function writeProjectConfig(guildId: string, config: ProjectConfig): Promise<void> {
+  const projectRoot = path.resolve(__dirname, '../../..');
+  const configDir = path.join(projectRoot, 'configs', 'projects');
+  const configPath = path.join(configDir, `${guildId}.json`);
+
+  // Ensure directory exists
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
+  }
+
+  // Write config
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+  // Update cache
+  configCache.set(guildId, config);
+
+  console.log(`[Config] Wrote project config for guild ${guildId}: ${config.projectName}`);
 }
