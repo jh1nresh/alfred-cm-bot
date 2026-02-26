@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-esm src/index.ts"
+    "dev": "tsx watch src/index.ts"
   },
   "keywords": [
     "discord",
@@ -19,11 +19,13 @@
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "discord.js": "^14.16.3"
+    "discord.js": "^14.16.3",
+    "ethers": "^6.13.4"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "engines": {

@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { buildSystemPrompt } from './prompt-builder.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 if (!GEMINI_API_KEY) {
@@ -7,20 +8,39 @@ if (!GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-const model = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash-exp',
-  systemInstruction:
-    'You are Alfred, a helpful Web3 community manager. Answer technical questions about DeFi, smart contracts, and blockchain clearly and concisely. Be friendly but accurate.',
-  generationConfig: {
-    maxOutputTokens: 500,
-  },
-});
+// Cache models per guildId to avoid recreating them
+const modelCache = new Map<string, GenerativeModel>();
 
 const FALLBACK_MESSAGE =
   "I apologize, but I'm having trouble processing your request right now. Please try again in a moment.";
 
-export async function generateReply(userMessage: string): Promise<string> {
+/**
+ * Get or create a model for a specific guild with customized system prompt
+ */
+function getModelForGuild(guildId: string): GenerativeModel {
+  if (modelCache.has(guildId)) {
+    return modelCache.get(guildId)!;
+  }
+
+  const systemPrompt = buildSystemPrompt(guildId);
+
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.0-flash-exp',
+    systemInstruction: systemPrompt,
+    generationConfig: {
+      maxOutputTokens: 500,
+    },
+  });
+
+  modelCache.set(guildId, model);
+  console.log(`[Gemini] Created model for guild ${guildId}`);
+
+  return model;
+}
+
+export async function generateReply(userMessage: string, guildId: string): Promise<string> {
   try {
+    const model = getModelForGuild(guildId);
     const result = await model.generateContent(userMessage);
     const response = result.response;
     const text = response.text();
@@ -34,4 +54,11 @@ export async function generateReply(userMessage: string): Promise<string> {
     console.error('[Gemini Error]', error);
     return FALLBACK_MESSAGE;
   }
+}
+
+/**
+ * Clear the model cache (useful for hot-reloading configs)
+ */
+export function clearModelCache(): void {
+  modelCache.clear();
 }

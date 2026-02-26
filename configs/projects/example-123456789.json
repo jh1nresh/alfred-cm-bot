@@ -1,0 +1,9 @@
+{
+  "guildId": "123456789",
+  "projectName": "MyDeFi Protocol",
+  "payoutPerReply": 0.10,
+  "reactionThreshold": 3,
+  "watchChannelIds": ["channel-id-1"],
+  "systemPromptExtra": "You are the community manager for MyDeFi Protocol, a lending platform on Base. Always refer users to docs.mydefi.xyz for technical questions.",
+  "knowledgeFiles": ["knowledge/123456789/faq.md"]
+}
