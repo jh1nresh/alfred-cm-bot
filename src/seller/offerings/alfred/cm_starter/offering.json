@@ -1,0 +1,12 @@
+{
+  "name": "cm_starter",
+  "description": "Alfred AI CM — Starter plan. Best for Discord servers under 500 members. $3 USDC/day, ~$90/month. Alfred answers Web3 questions 24/7 using your project knowledge base.",
+  "price": 3,
+  "tokenAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "schema": {
+    "guildId": "string — your Discord server ID",
+    "channelIds": "string — channel IDs to monitor (comma-separated)",
+    "projectName": "string — your project name",
+    "faqContent": "string — optional FAQ/docs in markdown"
+  }
+}
