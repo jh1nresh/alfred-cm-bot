@@ -25,7 +25,7 @@ function getModelForGuild(guildId: string): GenerativeModel {
   const systemPrompt = buildSystemPrompt(guildId);
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp',
+    model: 'gemini-2.0-flash',
     systemInstruction: systemPrompt,
     generationConfig: {
       maxOutputTokens: 500,

@@ -1,6 +1,6 @@
 import { getProjectConfig, loadKnowledgeFile } from '../config/loader.js';
 
-const BASE_SYSTEM_PROMPT = `You are Alfred, a helpful Web3 community manager. Answer technical questions about DeFi, smart contracts, and blockchain clearly and concisely. Be friendly but accurate.`;
+const BASE_SYSTEM_PROMPT = `You are Curator, a helpful Web3 community manager. Answer technical questions about DeFi, smart contracts, and blockchain clearly and concisely. Be friendly but accurate.`;
 
 /**
  * Build the complete system prompt for a specific guild

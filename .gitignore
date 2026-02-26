@@ -27,3 +27,4 @@ yarn-error.log*
 
 # TypeScript cache
 *.tsbuildinfo
+config.json

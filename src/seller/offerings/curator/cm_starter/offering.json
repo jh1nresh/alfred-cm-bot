@@ -1,0 +1,39 @@
+{
+  "name": "cm_starter",
+  "description": "Alfred AI Community Manager — Starter tier for Discord servers under 500 members. Alfred monitors conversations 24/7, answers Web3/DeFi questions using your project's knowledge base, and flags suspicious wallets via Maiat trust scores. $3 USDC/day. Renew daily to keep Alfred active.",
+  "jobFee": 3,
+  "jobFeeType": "fixed",
+  "requiredFunds": false,
+  "requirement": {
+    "type": "object",
+    "properties": {
+      "guildId": {
+        "type": "string",
+        "description": "Your Discord server ID"
+      },
+      "channelIds": {
+        "type": "string",
+        "description": "Channel IDs Alfred should monitor (comma-separated)"
+      },
+      "projectName": {
+        "type": "string",
+        "description": "Your project name"
+      },
+      "faqContent": {
+        "type": "string",
+        "description": "FAQ and documentation for Alfred to reference (markdown)"
+      }
+    },
+    "required": ["guildId", "projectName"]
+  },
+  "deliverable": {
+    "type": "object",
+    "properties": {
+      "status": { "type": "string", "description": "active / error" },
+      "guildId": { "type": "string" },
+      "projectName": { "type": "string" },
+      "discordInvite": { "type": "string", "description": "Invite link to add Alfred to your server" },
+      "message": { "type": "string" }
+    }
+  }
+}
