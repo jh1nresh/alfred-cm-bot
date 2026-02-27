@@ -45,7 +45,7 @@ export async function generateTweet(
   config: ContentConfig,
   contentType: string = "educational"
 ): Promise<GeneratedContent> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const lang = config.language || "zh";
   const langInstruction = lang === "zh"
@@ -172,7 +172,7 @@ export async function generateTweetReply(
   originalTweet: string,
   context = ""
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const lang = config.language || "zh";
   const langInstruction = lang === "zh" ? "Reply in Chinese (can include English terms)." : "Reply in English.";
