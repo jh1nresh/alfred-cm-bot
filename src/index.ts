@@ -43,8 +43,9 @@ const client = new Client({
 
 // Handle ready event
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`[Curator] Logged in as ${readyClient.user.tag}`);
-  console.log(`[Curator] Watching channels: ${Array.from(WATCH_CHANNEL_IDS).join(', ')}`);
+  console.log(`[Alfred] Logged in as ${readyClient.user.tag}`);
+  console.log(`[Alfred] Mode: Discord + Twitter/X Community Manager`);
+  console.log(`[Alfred] Watching channels: ${Array.from(WATCH_CHANNEL_IDS).join(', ') || 'ALL (open mode)'}`);
 
   // Initialize reaction tracker
   setupReactionTracker(client);
@@ -201,4 +202,24 @@ if (process.env.LITE_AGENT_API_KEY) {
   }).catch((err) => {
     console.error('[Curator] Failed to start ACP seller:', err);
   });
+}
+
+// Start Twitter content scheduler if any Twitter projects exist or Twitter credentials set
+const hasTwitterConfig = !!(
+  process.env.TWITTER_API_KEY ||
+  process.env.TWITTER_ACCESS_TOKEN
+);
+
+if (hasTwitterConfig) {
+  import("./twitter/scheduler.js").then(({ startTwitterScheduler }) => {
+    console.log('[Curator] Starting Twitter content scheduler...');
+    startTwitterScheduler();
+  }).catch((err) => {
+    console.error('[Curator] Failed to start Twitter scheduler:', err);
+  });
+} else {
+  // Still start scheduler to process any saved projects from ACP jobs
+  import("./twitter/scheduler.js").then(({ startTwitterScheduler }) => {
+    startTwitterScheduler();
+  }).catch(() => {}); // silent — no Twitter config yet
 }

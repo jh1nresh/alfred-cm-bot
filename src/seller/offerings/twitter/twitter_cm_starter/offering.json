@@ -1,0 +1,76 @@
+{
+  "name": "twitter_cm_starter",
+  "description": "Alfred AI Twitter/X Content Manager — Starter. Posts 4+ original crypto/Web3 tweets per week. AI generates market insights, product features, educational content, and hot takes targeting your audience. Ideal for crypto exchanges and DeFi platforms. $5 USDC/day.",
+  "jobFee": 5,
+  "jobFeeType": "fixed",
+  "requiredFunds": false,
+  "requirement": {
+    "type": "object",
+    "properties": {
+      "projectName": {
+        "type": "string",
+        "description": "Your project or platform name (e.g. 'Backpack Exchange')"
+      },
+      "projectDescription": {
+        "type": "string",
+        "description": "Brief description of your platform and key products (spot, contracts, stablecoins, etc.)"
+      },
+      "twitterHandle": {
+        "type": "string",
+        "description": "Your Twitter/X handle (e.g. @YourProject) — optional, used for content personalization"
+      },
+      "contentTopics": {
+        "type": "string",
+        "description": "Comma-separated content focus areas (e.g. 'spot trading,perpetual contracts,stablecoins,tokenized stocks,DeFi education')"
+      },
+      "targetAudience": {
+        "type": "string",
+        "description": "Your target audience description (e.g. 'overseas Chinese-speaking crypto traders')"
+      },
+      "competitors": {
+        "type": "string",
+        "description": "Comma-separated competitor names for positioning context (e.g. 'Binance,OKX,Bitget')"
+      },
+      "language": {
+        "type": "string",
+        "description": "Content language: zh (Chinese), en (English), or bilingual. Default: zh"
+      },
+      "postsPerWeek": {
+        "type": "number",
+        "description": "Number of posts per week. Minimum 4. Default: 4"
+      },
+      "twitterApiKey": {
+        "type": "string",
+        "description": "Twitter API Key (from developer.twitter.com) — required for auto-posting"
+      },
+      "twitterApiSecret": {
+        "type": "string",
+        "description": "Twitter API Secret"
+      },
+      "twitterAccessToken": {
+        "type": "string",
+        "description": "Twitter Access Token (your account)"
+      },
+      "twitterAccessSecret": {
+        "type": "string",
+        "description": "Twitter Access Token Secret"
+      }
+    },
+    "required": ["projectName", "projectDescription"]
+  },
+  "deliverable": {
+    "type": "object",
+    "properties": {
+      "status": { "type": "string", "description": "active / pending_credentials / error" },
+      "projectName": { "type": "string" },
+      "projectId": { "type": "string" },
+      "contentPlan": {
+        "type": "array",
+        "description": "First week content plan with sample tweets"
+      },
+      "postsPerWeek": { "type": "number" },
+      "expiresAt": { "type": "string" },
+      "message": { "type": "string" }
+    }
+  }
+}

@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "seller": "tsx src/seller/runtime/seller.ts"
+    "seller": "tsx src/seller/runtime/seller.ts",
+    "twitter:schedule": "tsx src/twitter/scheduler.ts"
   },
   "keywords": [
     "discord",
@@ -25,7 +26,8 @@
     "axios": "^1.13.4",
     "discord.js": "^14.16.3",
     "dotenv": "^17.3.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "twitter-api-v2": "^1.29.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
